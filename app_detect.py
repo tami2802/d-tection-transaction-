@@ -1,10 +1,9 @@
 import streamlit as st
-import pickle
+import joblib
 import numpy as np
 
 # Charger le modèle pré-entraîné
-with open('random_forest_model.pkl', 'rb') as file:
-    model = pickle.load(file)
+model = joblib.load('random_forest_model.joblib')
 
 # Titre de l'application
 st.title('Détection de Fraude Transactionnelle')
