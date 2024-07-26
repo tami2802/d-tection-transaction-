@@ -2,30 +2,31 @@ import streamlit as st
 import joblib
 import numpy as np
 
-# Charger le modèle pré-entraîné
+# Charger le modèle
 model = joblib.load('random_forest_model.joblib')
 
 # Titre de l'application
-st.title('Détection de Fraude Transactionnelle')
+st.title('Détection de Fraude dans les Transactions')
 
-# Instructions
-st.write('Veuillez entrer les détails de la transaction pour vérifier si elle est frauduleuse.')
+# Entrées utilisateur
+time = st.number_input('Time', min_value=0)
+amount = st.number_input('Amount', min_value=0.0)
+v4 = st.number_input('V4')
 
-# Inputs utilisateur
-time = st.number_input('Temps (Time)', min_value=0)
-amount = st.number_input('Montant (Amount)', min_value=0.0)
-v4 = st.number_input('V4', min_value=-100.0, max_value=100.0)
-
-# Bouton de prédiction
-if st.button('Vérifier la transaction'):
-    # Préparation des données d'entrée pour le modèle
+# Prédiction
+if st.button('Prédire'):
     input_data = np.array([[time, amount, v4]])
-    
-    # Prédiction
     prediction = model.predict(input_data)
-    
-    # Affichage du résultat
+    prediction_proba = model.predict_proba(input_data)
+
     if prediction[0] == 1:
-        st.error('La transaction est frauduleuse.')
+        st.error(f'Transaction Frauduleuse avec une probabilité de {prediction_proba[0][1]*100:.2f}%')
     else:
-        st.success('La transaction est non frauduleuse.')
+        st.success(f'Transaction Légitime avec une probabilité de {prediction_proba[0][0]*100:.2f}%')
+
+# Instructions d'exécution
+st.write("""
+### Instructions
+1. Entrez les valeurs pour **Time**, **Amount** et **V4**.
+2. Cliquez sur **Prédire** pour voir le résultat de la prédiction.
+""")
